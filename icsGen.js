@@ -4,10 +4,10 @@ var icsGen = function () {
     'use strict';
     
     // IE is supported if the php backend is used, other wise, you should uncomment the 4 lines below:
-//    if (navigator.userAgent.indexOf('MSIE') > -1 && navigator.userAgent.indexOf('MSIE 10') === -1) {
-//        window.console.log('Unsupported Browser');
-//        return;
-//    }
+    //if (navigator.userAgent.indexOf('MSIE') > -1 && navigator.userAgent.indexOf('MSIE 10') === -1) {
+    //    window.console.log('Unsupported Browser');
+    //    return;
+    //}
     
     var SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n',
         calendarEvents = [],

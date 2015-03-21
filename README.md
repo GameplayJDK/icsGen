@@ -10,7 +10,7 @@ How To Use
 ----------
 Just invoke the object and use the functions...
 
-```
+```javascript
 var cal = ics();
 cal.addEvent(subject, description, location, begin, end);
 cal.addEvent(subject, description, location, begin, end);
@@ -26,7 +26,7 @@ But please notice that some calendar clients behave differently. They might offs
 Example
 -------
 
-```
+```html
 <script>
     var cal = icsGen();
     cal.addEvent('Demo Event', 'This is an all day event', 'Nome, AK', '8/7/2015', '8/7/2015');
