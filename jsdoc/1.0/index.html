@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>icsGen</h1><p>A generator for <code>.ics</code> files written in javascript with an optional php backend.</p>
+<p><strong>This was forked from <a href="https://github.com/matthiasanderer/icsFormatter">icsFormatter</a> which was originally forked from <a href="https://github.com/nwcell/ics.js">ics.js</a>.</strong></p>
+<h2>How To Use</h2><p>Just invoke the object and use the functions...</p>
+<pre class="prettyprint source lang-javascript"><code>var cal = ics();
+cal.addEvent(subject, description, location, begin, end, uid);
+// Yep, you are allowed to have more than one event in your .ics file
+cal.addEvent(subject, description, location, begin, end, uid);
+cal.download(filename, extension, dlh);
+// And you can access the events as javascript objects
+cal.events();
+// Or even as .ics formatted text
+cal.eventsRaw();</code></pre><p><code>begin</code> and <code>end</code> need to be formatted in a way that is friendly to <code>Date()</code>. <code>dlh</code> has to be a valid url to a version of the <code>dlh.php</code> file, otherwise the download won't work, or equal <code>false</code> (or any other falsey value), if you wish to use the javascript only way instead.</p>
+<p>You can have multiple events. Events can be either one of three types: <em>Fixed time</em>, <em>All day</em>, <em>Multi day</em>.
+But please notice that some calendar clients behave differently. They might offset the end date by -1 day or the start time by +1 minute.</p>
+<h2>Example</h2><pre class="prettyprint source lang-html"><code>&lt;script>
+    var cal = icsGen();
+    cal.addEvent('Demo Event', 'This is an all day event', 'Nome, AK', '8/7/2015', '8/7/2015', null);
+    cal.addEvent('Demo Event', 'This is a thirty minut event', 'Nome, AK', '8/7/2015 5:30 pm', '8/7/2015 6:00 pm', null);
+    cal.addEvent('Demo Event', 'This is a multi day event', 'Nome, AK', '8/7/2015', '8/9/2015', null);
+&lt;/script>
+&lt;a href=&quot;javascript:cal.download('calendar', 'ics', './php/dlh.php')&quot;>Demo&lt;/a> &lt;!-- with php backend    -->
+&lt;a href=&quot;javascript:cal.download('calendar', 'ics', false)&quot;>Demo&lt;/a>           &lt;!-- without php backend --></code></pre><p>Make sure you have the right path to the <code>dlh.php</code> file set! It can also be an absolute instead of a relative path.</p>
+<p><strong>Experimental</strong>: <em>If you're on linux or mac you can run the <code>convert_to_unix_style_line_endings.sh</code> script to get the unix style line endings (<code>\n</code> instead of <code>\r\n</code>). (Be aware that this will remove the proper display of the files on a windows computer and may also influence the proper detection of the os, and thus, the <code>SEPARATOR</code>, through the browser)!</em></p>
+<h2>Plans</h2><p>I will try to keep this as up to date as possible (which should not be a problem, since the spec seems to be very consistent).
+I also plan to add more features, such as timezone support, as I have time and maybe do a complete rewrite which will then include an <code>.ics</code> parser.
+Node.js support will be added by the time the rewritten version will be released.</p>
+<h2>Bugs and Feature Requests</h2><p>Please report all bugs or feature requests to <a href="issues">the issue tracker</a>.</p>
+<h2>Credits</h2><ul>
+<li><a href="https://github.com/nwcell">Travis Krause</a>: Original author</li>
+<li><a href="https://github.com/khornberg">Kyle Hornberg</a>: Added multi event functionality and made everything a package firendly</li>
+<li><a href="https://github.com/matthiasanderer">matthiasanderer</a>: Fixed the bug which made chrome open the ics text instead of starting the download</li>
+<li><a href="https://github.com/GameplayJDK">GameplayJDK</a>: Added optional php backend with alternative pure javascript fallback and line ending conversion script</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+        icsGen.js
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Holds the icsGen source code</div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+    <dt class="tag-version">Version:</dt>
+    <dd class="tag-version"><ul class="dummy"><li>1.0</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-author">Author:</dt>
+    <dd class="tag-author">
+        <ul>
+            <li><a href="mailto:github@gameplayjdk.de">GameplayJDK</a></li>
+        </ul>
+    </dd>
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="icsGen.js.html">icsGen.js</a>, <a href="icsGen.js.html#line7">line 7</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://github.com/GameplayJDK/icsGen/blob/master/README.md">README.md</a> for a detailed description.</li>
+        </ul>
+    </dd>
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>(GameplayJDK): Add support for more stuff from the .ics spec?</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#addEvent">addEvent</a></li><li><a href="global.html#calendar">calendar</a></li><li><a href="global.html#download">download</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#eventsRaw">eventsRaw</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-beta3</a> on Wed Mar 25 2015 22:05:03 GMT+0100 (W. Europe Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

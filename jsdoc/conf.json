@@ -1,0 +1,23 @@
+{
+    "tags": {
+        "dictionaries": [
+            "jsdoc"
+        ]
+    },
+    "source": {
+        "include": [
+            "./src/icsGen.js"
+        ]
+    },
+    "plugins": [
+    ],
+    "templates": {
+        "monospaceLinks": true
+    },
+    "opts": {
+        "template": "templates/default",
+        "encoding": "utf8",
+        "destination": "./jsdoc/1.0",
+        "readme": "./README.md"
+    }
+}

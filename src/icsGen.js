@@ -1,5 +1,17 @@
-// Forked from icsFormatter (https://github.com/matthiasanderer/icsFormatter)
+// (Non-JSDoc3 data):
+// icsGen, a generator for .ics files written in javascript with an optional php backend.
+// Edited by GameplayJDK (https://github.com/GameplayJDK); Repository can be found at https://github.com/GameplayJDK/icsGen.
+// Please report bugs or feature requests to https://github.com/GameplayJDK/icsGen/issues.
+// Forked from icsFormatter (https://github.com/matthiasanderer/icsFormatter) which was originally forked from ics.js (https://github.com/nwcell/ics.js).
 
+/**
+ * icsGen, a generator for .ics files written in javascript with an optional php backend.
+ * @see {@link https://github.com/GameplayJDK/icsGen/blob/master/README.md README.md} for a detailed description.
+ * @file Holds the icsGen source code
+ * @author GameplayJDK <github@gameplayjdk.de>
+ * @version 1.0
+ * @todo (GameplayJDK): Add support for more stuff from the .ics spec?
+ */
 var icsGen = function () {
     'use strict';
     
@@ -9,46 +21,82 @@ var icsGen = function () {
     //    return;
     //}
     
-    var SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n',
+    /**
+     * Generates a unique identifier (UID)
+     * @return {string} UID
+     */
+    var UID = function (length) {
+        var chars = "abcdefghijklmnopqrstuvwxyz0123456789_",
+            inString = "icsGen".toLowerCase(),
+            outString = "",
+            i;
+        while (inString.length < length) {
+            inString += inString;
+        }
+        for (i = 0; i < length; i += 1) {
+            outString += chars.charAt(chars.indexOf(inString.charAt(i)));
+        }
+        return (outString);
+    },
+        SEPARATOR = (navigator.appVersion.indexOf('Win') !== -1) ? '\r\n' : '\n',
+        events = [],
         calendarEvents = [],
         calendarStart = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0'
         ].join(SEPARATOR),
-        calendarEnd = SEPARATOR + 'END:VCALENDAR';
+        /**
+         * @todo (GameplayJDK): Add support for timezones
+         */
+        calendarTimezone = [
+        ],
+        calendarEnd = 'END:VCALENDAR';
     
     return {
         /**
-         * Returns events array
+         * Returns raw events array (raw)
+         * @return {array} Raw events
+         */
+        'eventsRaw': function () {
+            return calendarEvents;
+        },
+        
+        /**
+         * Returns events array (object)
          * @return {array} Events
          */
         'events': function () {
-            return calendarEvents;
+            return events;
         },
+        
         
         /**
          * Returns calendar
          * @return {string} Calendar in iCalendar format
          */
         'calendar': function () {
-            return calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+            return [calendarStart, calendarTimezone, calendarEvents.join(SEPARATOR), calendarEnd].join(SEPARATOR);
         },
         
         /**
          * Add event to the calendar
-         * @param  {string} subject     Subject/Title of event
-         * @param  {string} description Description of event
-         * @param  {string} location    Location of event
-         * @param  {string} begin       Beginning date of event
-         * @param  {string} stop        Ending date of event
+         * @param  {string} subject        Subject/Title of event
+         * @param  {string} description    Description of event
+         * @param  {string} location       Location of event
+         * @param  {string} begin          Beginning date of event
+         * @param  {string} stop           Ending date of event
+         * @param  {string} [uid=UID(21)]  Unique identifier of event, leave null for normal behaviour
          */
-        'addEvent': function (subject, description, location, begin, stop) {
-            // I'm not in the mood to make these optional... So they are all required
-            if (typeof subject === 'undefined' || typeof description === 'undefined' || typeof location === 'undefined' || typeof begin === 'undefined' || typeof stop === 'undefined') {
+        'addEvent': function (subject, description, location, begin, stop, uid) {
+            
+            if (uid === null) {
+                uid = UID(21);
+            }
+            
+            if (typeof subject === 'undefined' || typeof description === 'undefined' || typeof location === 'undefined' || typeof begin === 'undefined' || typeof stop === 'undefined' || typeof uid === 'undefined') {
                 return false;
             }
             
-            //TODO add time and time zone? use moment to format?
             var start_date = new Date(begin),
                 end_date = new Date(stop),
                 
@@ -71,7 +119,8 @@ var icsGen = function () {
                 end_time = '',
                 start,
                 end,
-                calendarEvent;
+                calendarEvent,
+                event;
                 
             if (start_minutes + start_seconds + end_minutes + end_seconds !== 0) {
                 start_time = 'T' + start_hours + start_minutes + start_seconds;
@@ -83,6 +132,7 @@ var icsGen = function () {
             
             calendarEvent = [
                 'BEGIN:VEVENT',
+                'UID:' + 'icsGen-' + uid,
                 'CLASS:PUBLIC',
                 'DESCRIPTION:' + description,
                 'DTSTART;VALUE=DATE:' + start,
@@ -92,15 +142,25 @@ var icsGen = function () {
                 'TRANSP:TRANSPARENT',
                 'END:VEVENT'
             ].join(SEPARATOR);
+            event = {
+                "uid": uid,
+                "description": description,
+                "start": start,
+                "end": end,
+                "location": location,
+                "subject": subject
+            };
             
+            events.push(event);
             calendarEvents.push(calendarEvent);
             return calendarEvent;
         },
         
         /**
          * Download calendar using dlh.php
-         * @param  {string} filename Filename
-         * @param  {string} ext      Extention
+         * @param  {string} [filename=calendar]  Filename
+         * @param  {string} [ext=js]             Extention
+         * @param  {string} [dlh=./dlh.php]      Path to the dlh.php file
          */
         'download': function (filename, ext, dlh) {
             if (calendarEvents.length < 1) {
@@ -110,12 +170,12 @@ var icsGen = function () {
             filename = (typeof filename !== 'undefined') ? filename : 'calendar';
             ext = (typeof ext !== 'undefined') ? ext : '.ics';
             dlh = (typeof dlh !== 'undefined') ? dlh : './dlh.php';
-            var calendar = calendarStart + SEPARATOR + calendarEvents.join(SEPARATOR) + calendarEnd;
+            var calendar = [calendarStart, calendarTimezone, calendarEvents.join(SEPARATOR), calendarEnd].join(SEPARATOR);
             
-            if (dlh !== true) {
+            if (!dlh) {
                 window.open("data:text/calendar;charset=utf8," + encodeURIComponent(calendar));
             } else {
-                window.location = encodeURI(dlh) + "?f=" + encodeURIComponent(filename + ext) + "&t=" + encodeURIComponent(calendar);
+                window.location = encodeURI(dlh) + "?f=" + encodeURIComponent(filename + "." + ext) + "&t=" + encodeURIComponent(calendar);
             }
         }
     };
